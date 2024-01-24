@@ -1,0 +1,1 @@
+# goodfull_nvim
