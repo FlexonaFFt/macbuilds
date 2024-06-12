@@ -1,3 +1,4 @@
+" Подключение основных настроек nvim
 set mouse=a  " enable mouse
 set encoding=utf-8
 set number
@@ -23,8 +24,38 @@ set shiftwidth=2
 set splitbelow
 set splitright
 
+" Подключение копирование / буфера обмена
+set clipboard=unnamedplus
+" Map Command+C to copy to system clipboard
+if has('macunix')
+  " Use <D-...> for Command key in macOS
+  nmap <D-c> "+y
+  vmap <D-c> "+y
+  cmap <D-c> "+y
+  imap <D-c> <Esc>"+ya
+
+  " Map Command+V to paste from system clipboard
+  nmap <D-v> "+gP
+  vmap <D-v> "+P
+  cmap <D-v> <C-R>+
+  imap <D-v> <Esc>"+gPa
+else
+  " Use <C-...> for Control key in other systems
+  nmap <C-c> "+y
+  vmap <C-c> "+y
+  cmap <C-c> "+y
+  imap <C-c> <Esc>"+ya
+
+  " Map Control+V to paste from system clipboard
+  nmap <C-v> "+gP
+  vmap <C-v> "+P
+  cmap <C-v> <C-R>+
+  imap <C-v> <Esc>"+gPa
+endif
+
 inoremap jk <esc>
 
+" Подключение плагинов
 call plug#begin('~/.vim/plugged')
 
 Plug 'neovim/nvim-lspconfig'
@@ -35,9 +66,8 @@ Plug 'L3MON4D3/LuaSnip'
 
 " color schemas
 Plug 'morhetz/gruvbox'  " colorscheme gruvbox
-Plug 'mhartington/oceanic-next'  " colorscheme OceanicNext
-Plug 'kaicataldo/material.vim', { 'branch': 'main' }
-Plug 'ayu-theme/ayu-vim'
+Plug 'shaunsingh/nord.nvim' " colorscheme nord 
+Plug 'sainnhe/everforest' " colorscheme everforest
 
 Plug 'xiyaowong/nvim-transparent'
 
@@ -64,14 +94,21 @@ Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.5' }
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
 
 " Convenient floating terminal window
-"Plug 'voldikss/vim-floaterm'
+" Plug 'voldikss/vim-floaterm'
 
 Plug 'ray-x/lsp_signature.nvim'
 
 Plug 'lspcontainers/lspcontainers.nvim'
 
+" Подключение плагина автоматического закрытия скобок
+Plug 'm4xshen/autoclose.nvim'
+
+" Плагины для веб разработки
+Plug 'mattn/emmet-vim'
+
 call plug#end()
 
+" Подключение дополнительных настроек от Диджитализируй
 " Leader bind to space
 let mapleader = ","
 
@@ -90,25 +127,36 @@ let g:prettier#quickfix_enabled = 0
 " Turn on vim-sneak
 let g:sneak#label = 1
 
-colorscheme gruvbox
-"colorscheme OceanicNext
-"let g:material_terminal_italics = 1
-" variants: default, palenight, ocean, lighter, darker, default-community,
-"           palenight-community, ocean-community, lighter-community,
-"           darker-community
-"let g:material_theme_style = 'darker'
-"colorscheme material
-if (has('termguicolors'))
-  set termguicolors
-endif
+" Подключение цветовой схемы
+colorscheme everforest
 
-" variants: mirage, dark, dark
-"let ayucolor="mirage"
-"colorscheme ayu
+" Автозакрытие HTML тегов
+let g:user_emmet_install_global = 0
+let g:user_emmet_leader_key='<C-Z>'
+let g:user_emmet_mode='i'
+let g:user_emmet_settings = {
+  \ 'html': {
+  \   'snippets': {
+  \     'tags': {
+  \       'a': '<a href=""></a>',
+  \       'img': '<img src="" alt="">',
+  \       'input': '<input type="" name="" id="">',
+  \       'link': '<link rel="stylesheet" href="">',
+  \       'script': '<script src=""></script>',
+  \       'meta': '<meta name="" content="">',
+  \       'br': '<br>',
+  \       'hr': '<hr>',
+  \     },
+  \   },
+  \ },
+  \}
 
-" turn off search highlight
-nnoremap ,<space> :nohlsearch<CR>
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall
 
+let g:user_emmet_leader_key='<C-Z>'
+
+" Настройка autocomplete nvim 
 lua << EOF
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -118,11 +166,9 @@ local luasnip = require 'luasnip'
 local async = require "plenary.async"
 
 -- nvim-cmp setup
+-- Я подключил автоматическую работу autocomplete
 local cmp = require 'cmp'
 cmp.setup {
-  completion = {
-    autocomplete = false
-  },
   snippet = {
     expand = function(args)
       require('luasnip').lsp_expand(args.body)
@@ -173,6 +219,7 @@ local on_attach = function(client, bufnr)
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
+  -- Подключение Mappings и настройка HelpList
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
@@ -198,6 +245,7 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
   buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 
+  -- Настройка вывода ошибки lsp сервера 
   require "lsp_signature".on_attach({
       bind = true, -- This is mandatory, otherwise border config won't get registered.
       floating_window = true,
@@ -207,6 +255,11 @@ local on_attach = function(client, bufnr)
       hint_prefix = '👻 '
     }, bufnr)  -- Note: add in lsp client on-attach
 end
+
+-- Настройка автоматического закртытия скобок
+require("autoclose").setup()
+
+-- Дополнительные настройки конфига от Диджитализируй 
 
 -- TS setup
 local buf_map = function(bufnr, mode, lhs, rhs, opts)
@@ -252,7 +305,7 @@ require'lspconfig'.stylelint_lsp.setup{
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'pyright', 'rust_analyzer' }
+local servers = { 'pyright', 'rust_analyzer', 'html' }
 for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup {
     on_attach = on_attach,
