@@ -9,12 +9,15 @@
 - goodfull_nvim - Диджитализируй паккинг
 - second_build
 - third_build
+- vs_code_theme_build
+- zed_build
 
 ## Описание конфигураций 
 
 `goodfull_nvim` - включает в себя базовую конфигурацию nvim с самыми необходимыми плагинами. Сборка создана Алексеем Голобурдином.
 `second_build` - представляет из себя переработанную сборку nvim, с полным autocomplete и brackets_auto
 `third_buil` - содержит в себе дополнительные плагины для вёрстки html и css
+`zed_build` - лучшая конфигурация для zed, стоит использовать тему Min Dark
 
 ## Контакты
 
