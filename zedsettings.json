@@ -1,0 +1,82 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run the `open default settings` command
+// from the command palette or from `Zed` application menu.
+{
+  "icon_theme": "Zed (Default)",
+  "show_edit_predictions": true,
+  "assistant": {
+    "default_model": {
+      "provider": "zed.dev",
+      "model": "claude-3-7-sonnet-latest"
+    },
+    "version": "2"
+  },
+  "auto_update_extensions": {
+    "emmet": false
+  },
+  "features": {
+    "edit_prediction_provider": "zed"
+  },
+  "base_keymap": "VSCode",
+  "theme": "Fleet Dark",
+  "buffer_font_family": "Fira Code",
+  "vim_mode": true,
+  "ui_font_size": 16,
+  "buffer_font_size": 16,
+  "scrollbar": {
+    "show": "never"
+  },
+  "pylsp": {
+    "settings": {
+      "plugins": {
+        "pycodestyle": {
+          "enabled": true,
+          "ignore": ["E501"]
+        }
+      }
+    }
+  },
+  "lsp": {
+    "golangci-lint": {
+      "initialization_options": {
+        "command": [
+          "golangci-lint",
+          "run",
+          "--out-format",
+          "json",
+          "--issues-exit-code=1"
+        ]
+      }
+    }
+  },
+  "languages": {
+    "Verilog": {
+      "format_on_save": "off",
+      "preferred_line_length": 120,
+      "soft_wrap": "preferred_line_length"
+    },
+    "HTML": {
+      "format_on_save": "off",
+      "preferred_line_length": 140,
+      "soft_wrap": "preferred_line_length"
+    },
+    "Python": {
+      "show_edit_predictions": false,
+      "format_on_save": "off",
+      "language_servers": ["pyright"]
+    },
+    "SQL": {
+      "format_on_save": "off"
+    },
+    "Go": {
+      "show_edit_predictions": false,
+      "language_servers": ["gopls", "golangci-lint"]
+    }
+  }
+}
+
