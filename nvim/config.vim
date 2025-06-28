@@ -1,5 +1,5 @@
 " Подключение основных настроек nvim
-set mouse=a  " enable mouse
+set mouse=a  
 set encoding=utf-8
 set number
 set cursorline
@@ -12,7 +12,7 @@ set shiftwidth=4
 set expandtab
 set autoindent
 set fileformat=unix
-filetype indent on      " load filetype-specific indent files
+filetype indent on      
 
 " for tabulation
 set smartindent
@@ -25,8 +25,6 @@ set splitbelow
 set splitright
 
 inoremap jk <esc>
-
-" Подключение плагинов
 call plug#begin('~/.vim/plugged')
 
 Plug 'neovim/nvim-lspconfig'
@@ -40,6 +38,7 @@ Plug 'morhetz/gruvbox'  " colorscheme gruvbox
 Plug 'shaunsingh/nord.nvim' " colorscheme nord
 Plug 'ayu-theme/ayu-vim' " colorscheme ayu-themes
 Plug 'elvessousa/sobrio'
+Plug 'webhooked/kanso.nvim'
 
 Plug 'xiyaowong/nvim-transparent'
 Plug 'preservim/nerdtree'
@@ -109,7 +108,7 @@ let g:prettier#quickfix_enabled = 0
 let g:sneak#label = 1
 
 " Подключение цветовой схемы
-colorscheme sobrio
+colorscheme kanso
 
 " Автозакрытие HTML тегов
 let g:user_emmet_install_global = 0
@@ -193,21 +192,16 @@ cmp.setup {
 
 local nvim_lsp = require('lspconfig')
 
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
 local on_attach = function(client, bufnr)
-
   local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
   local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
 
-  -- Подключение Mappings и настройка HelpList
   -- Enable completion triggered by <c-x><c-o>
   buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-  -- Mappings.
   local opts = { noremap=true, silent=true }
 
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
+  -- Keymaps for LSP
   buf_set_keymap('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
   buf_set_keymap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
   buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
@@ -221,20 +215,20 @@ local on_attach = function(client, bufnr)
   buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
   buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
   buf_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
-  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+  buf_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+  buf_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+  buf_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.format({ async = true })<CR>', opts)
 
-  -- Настройка вывода ошибки lsp сервера 
+  -- LSP Signature (подсказки аргументов функций)
   require "lsp_signature".on_attach({
-      bind = true, -- This is mandatory, otherwise border config won't get registered.
+      bind = true,
       floating_window = true,
       floating_window_above_cur_line = true,
       floating_window_off_x = 20,
       doc_lines = 10,
       hint_prefix = '👻 '
-    }, bufnr)  -- Note: add in lsp client on-attach
+    }, bufnr)
 end
 
 -- Настройка автоматического закртытия скобок
@@ -286,9 +280,7 @@ require'lspconfig'.stylelint_lsp.setup{
 -- Функция для настройки LSP серверов
 local on_attach = function(client, bufnr)
   -- Отключить всплывающие окна с документацией
-  client.resolved_capabilities.hover_provider = false
-  -- Отключить диагностические сообщения
-  client.resolved_capabilities.document_diagnostic = false
+  client.server_capabilities.hover_provider = false
 end
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
@@ -434,4 +426,4 @@ set termguicolors
 hi DiagnosticError guifg=White
 hi DiagnosticWarn  guifg=White
 hi DiagnosticInfo  guifg=White
-hi DiagnosticHint  guifg=White
+hi DiagnosticHint  guifg=Wite
